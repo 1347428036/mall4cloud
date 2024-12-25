@@ -42,7 +42,7 @@ services:
   mall4cloud-nacos:
     image: registry.cn-hongkong.aliyuncs.com/mall4j-images/nacos-server:v2.3.2
     container_name: mall4cloud-nacos
-    restart: always
+    restart: no
     depends_on:
       - mall4cloud-mysql
     network_mode: "host"
@@ -56,10 +56,11 @@ services:
       - MODE=standalone
       - PREFER_HOST_MODE=hostname
       - SPRING_DATASOURCE_PLATFORM=mysql
-      - MYSQL_SERVICE_HOST=192.168.1.46
+      - MYSQL_SERVICE_HOST=172.17.226.19
       - MYSQL_SERVICE_DB_NAME=mall4cloud_nacos
       - MYSQL_SERVICE_USER=root
       - MYSQL_SERVICE_PASSWORD=80jpnH4.r5g
+      - MYSQL_SERVICE_DB_PARAM=characterEncoding=utf8&connectTimeout=1000&socketTimeout=3000&autoReconnect=true&allowPublicKeyRetrieval=true&serverTimezone=GMT%2B8
       - NACOS_AUTH_ENABLE=true
       - NACOS_CORE_AUTH_PLUGIN_NACOS_TOKEN_SECRET_KEY=TWFsbDRqTWFsbDRjbG91ZE1hbGw0ak1hbGw0Y2xvdWRNYWxsNGpNYWxsNGNsb3Vk
       - NACOS_CORE_AUTH_SERVER_IDENTITY_KEY=mall4jmall4jmall4jmall4jmall4jmall4jmall4jmall4j
@@ -78,7 +79,7 @@ services:
     environment:
       - TZ
       - STORE_MODE=db
-      - SEATA_IP=192.168.1.46
+      - SEATA_IP=172.17.226.19
       - SEATA_PORT=8091
     volumes:
       - ./seata/application.yml:/seata-server/resources/application.yml
@@ -143,7 +144,7 @@ services:
       - ./rocketmq/broker/conf/broker.conf:/etc/rocketmq/broker.conf
     environment:
       JAVA_OPT_EXT: "-Duser.home=/home/rocketmq -Xms512M -Xmx512M -Xmn128M -XX:-AssumeMP"
-    command: ["sh","mqbroker","-c","/etc/rocketmq/broker.conf","-n","192.168.1.46:9876","autoCreateTopicEnable=true"]
+    command: ["sh","mqbroker","-c","/etc/rocketmq/broker.conf","-n","172.17.226.19:9876","autoCreateTopicEnable=true"]
     depends_on:
       - mall4cloud-rocketmq-namesrv
 
@@ -155,6 +156,6 @@ services:
     ports:
       - 8180:8080
     environment:
-      JAVA_OPTS: "-Drocketmq.namesrv.addr=192.168.1.46:9876 -Dcom.rocketmq.sendMessageWithVIPChannel=false"
+      JAVA_OPTS: "-Drocketmq.namesrv.addr=172.17.226.19:9876 -Dcom.rocketmq.sendMessageWithVIPChannel=false"
     depends_on:
       - mall4cloud-rocketmq-namesrv
